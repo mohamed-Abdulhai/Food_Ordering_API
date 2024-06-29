@@ -46,7 +46,7 @@ This is a RESTful API for a food ordering system, built with Express.js and vari
 
 1. Clone the repository:
     ```sh
-    git clone https://github.com/your-username/food-ordering-api.git
+    git clone https://github.com/mohamed-Abdulhai/Food_Ordering_API.git
     ```
 2. Navigate to the project directory:
     ```sh
