@@ -5,22 +5,18 @@ import { cheackExistingName } from "./meal.middleware.js";
 import { auth, isAdmin } from "../auth/auth.middleware.js";
 import { validate } from "../../validation/validation.js";
 import { addMealValidationSchema, updateMealValidationSchema } from "./meal.validation.js";
+import upload from "../../fileUpload/upload.js";
 
 const router = Router()
 
-router.route('/').get(getAllMeals)
-.post(auth,isAdmin,validate(addMealValidationSchema),cheackExistingName,addMeal)
-.delete(auth,isAdmin,deleteAllMeals)
+router.route('/')
+  .get(getAllMeals)
+  .post(auth, isAdmin, upload.single('image'), validate(addMealValidationSchema), cheackExistingName, addMeal)
+  .delete(auth, isAdmin, deleteAllMeals);
+
 router.route('/:id')
-.put(auth,isAdmin,validate(objectIdSchema),validate(updateMealValidationSchema),updateMeal)
-.get(validate(objectIdSchema),getMeal)
-.delete(auth,isAdmin,validate(objectIdSchema),deleteMeal)
-
-
-
-
-
-
-
+  .put(auth, isAdmin, upload.single('image'), validate(objectIdSchema), validate(updateMealValidationSchema), updateMeal)
+  .get(validate(objectIdSchema), getMeal)
+  .delete(auth, isAdmin, validate(objectIdSchema), deleteMeal);
 
 export default router
