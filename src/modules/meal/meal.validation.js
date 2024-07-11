@@ -11,6 +11,7 @@ export const addMealValidationSchema = Joi.object({
 })
 
 export const updateMealValidationSchema = Joi.object({
+    id:Joi.string().hex().length(24).required(),
     name:Joi.string().min(5).max(32),
     description:Joi.string().min(10).max(1000),
     price:Joi.number().min(1),

@@ -1,31 +1,35 @@
 import multer from 'multer';
 import { v4 as uuidv4 } from 'uuid';
-import path from 'path';
 import { AppError } from '../utilities/AppError.js';
+import fs from 'fs';
+import path from 'path';
+
+// Ensure the 'uploads' directory exists
+const uploadDir = path.join(process.cwd(), 'uploads');
+if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
+}
 
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'uploads/');  // Temporary folder to hold uploads before sending to Cloudinary
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = `${new Date().toISOString()}-${uuidv4()}`;
-    cb(null, `${uniqueSuffix}-${file.originalname}`);
-  }
+    destination: (req, file, cb) => {
+        cb(null, uploadDir);
+    },
+    filename: (req, file, cb) => {
+        const uniqueSuffix = `${new Date().toISOString()}-${uuidv4()}-${file.originalname}`;
+        cb(null, uniqueSuffix);
+    }
 });
 
 const fileFilter = (req, file, cb) => {
-  // Accept only specific file types (e.g., jpeg and png)
-  if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
-    cb(null, true);
-  } else {
-    cb(new AppError('Invalid file type, only JPEG and PNG are allowed!'), false);
-  }
+    if (file.mimetype.startsWith('image')) {
+        cb(null, true);
+    } else {
+        cb(new AppError('Images only!', 401), false);
+    }
 };
 
-const upload = multer({ 
-  storage: storage,
-  fileFilter: fileFilter,
-  limits: { fileSize: 1024 * 1024 * 5 }  // 5MB file size limit
-});
+const fileUpload = multer({ storage, fileFilter });
 
-export default upload;
+export const uploadSingleFile = fieldName => fileUpload.single(fieldName);
+export const uploadArrayOfFiles = fieldName => fileUpload.array(fieldName, 10);
+export const uploadFields = fields => fileUpload.fields(fields);

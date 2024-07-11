@@ -9,7 +9,7 @@ const signup =catchError(async(req,res,next)=>{
     const user = await User.insertMany(req.body)
     if(user) {
         sendEmail(req.body.email)
-        res.status(201).json({message:'user created successfully',user})
+        res.status(201).json({message:'user created successfully'})
         
 }
 })

@@ -1,22 +1,22 @@
 import { Router } from "express";
-import { addMeal,deleteAllMeals,deleteMeal,getAllMeals,getMeal,updateMeal } from "./meal.controller.js";
-import {objectIdSchema, } from './../../middlewares/globale.middleware.js'
+import { addMeal, deleteAllMeals, deleteMeal, getAllMeals, getMeal, updateMeal } from "./meal.controller.js";
+import { objectIdSchema } from '../../middlewares/globale.middleware.js';
 import { cheackExistingName } from "./meal.middleware.js";
 import { auth, isAdmin } from "../auth/auth.middleware.js";
 import { validate } from "../../validation/validation.js";
 import { addMealValidationSchema, updateMealValidationSchema } from "./meal.validation.js";
-import upload from "../../fileUpload/upload.js";
+import { uploadSingleFile } from "../../fileUpload/upload.js";
 
-const router = Router()
+const router = Router();
 
 router.route('/')
-  .get(getAllMeals)
-  .post(auth, isAdmin, upload.single('image'), validate(addMealValidationSchema), cheackExistingName, addMeal)
-  .delete(auth, isAdmin, deleteAllMeals);
+    .get(getAllMeals)
+    .post(auth, isAdmin, uploadSingleFile('image'), validate(addMealValidationSchema), cheackExistingName, addMeal)
+    .delete(auth, isAdmin, deleteAllMeals);
 
 router.route('/:id')
-  .put(auth, isAdmin, upload.single('image'), validate(objectIdSchema), validate(updateMealValidationSchema), updateMeal)
-  .get(validate(objectIdSchema), getMeal)
-  .delete(auth, isAdmin, validate(objectIdSchema), deleteMeal);
+    .put(auth, isAdmin, uploadSingleFile('image'), validate(objectIdSchema), validate(updateMealValidationSchema), updateMeal)
+    .get(validate(objectIdSchema), getMeal)
+    .delete(auth, isAdmin, validate(objectIdSchema), deleteMeal);
 
-export default router
+export default router;

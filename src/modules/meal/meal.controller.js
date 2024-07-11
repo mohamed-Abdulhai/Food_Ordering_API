@@ -10,7 +10,7 @@ const addMeal = catchError(async (req, res) => {
         return res.status(400).json({ message: 'Image file is required' });
     }
 
-    const imagePath = path.join('uploads', req.file.filename);
+    const imagePath = path.resolve(req.file.path);
 
     // Upload the file to Cloudinary
     const result = await cloudinary.uploader.upload(imagePath, { folder: 'meals' });
@@ -29,8 +29,8 @@ const updateMeal = catchError(async (req, res, next) => {
     }
 
     if (req.file) {
-        const imagePath = path.join('uploads', req.file.filename);
-        
+        const imagePath = path.resolve(req.file.path);
+
         // Upload the new image to Cloudinary
         const result = await cloudinary.uploader.upload(imagePath, { folder: 'meals' });
 
@@ -79,7 +79,7 @@ const getMeal = catchError(async (req, res, next) => {
 
 const deleteAllMeals = catchError(async (req, res) => {
     const meals = await Meal.find();
-    
+
     for (let meal of meals) {
         const imagePublicId = meal.image.split('/').pop().split('.')[0];
         await cloudinary.uploader.destroy(imagePublicId);
